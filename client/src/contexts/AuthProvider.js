@@ -23,6 +23,8 @@ const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
+  console.log(user);
+
   //1. Create User
   const createUser = (email, password) => {
     setLoading(true)
@@ -53,7 +55,7 @@ const AuthProvider = ({ children }) => {
   // 5. Logout
   const logout = () => {
     setLoading(true)
-    localStorage.removeItem('aircnc-token')
+    localStorage.removeItem('airbnb-token')
     return signOut(auth)
   }
 

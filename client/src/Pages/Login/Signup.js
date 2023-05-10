@@ -1,9 +1,70 @@
-import React from 'react'
-
-import { Link } from 'react-router-dom'
+import React, { useContext } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import PrimaryButton from '../../Components/Button/PrimaryButton'
+import { AuthContext } from '../../contexts/AuthProvider'
+import toast from 'react-hot-toast'
+import SmallSpinner from '../../Components/Spinner/SmallSpinner'
+import { setAuthToken } from '../../api/auth'
 
 const Signup = () => {
+  const { createUser, updateUserProfile, verifyEmail, loading, setLoading,signInWithGoogle } = useContext(AuthContext)
+
+  const navigate = useNavigate()
+   const location = useLocation()
+   const from = location.state?.from?.pathname || '/'
+
+  const handleSubmit = event => {
+    event.preventDefault()
+    const name = event.target.name.value;
+    const image = event.target.image.files[0];
+    const email = event.target.email.value;
+    const password = event.target.password.value;
+
+
+    const formData = new FormData()
+    formData.append('image', image)
+    //1fd6c8f9b502642f0bee2b73bb22a83f
+    const url = "https://api.imgbb.com/1/upload?key=1fd6c8f9b502642f0bee2b73bb22a83f"
+    fetch(url, {
+      method: 'POST',
+      body: formData,
+    })
+      .then(res => res.json())
+      .then(imageData => {
+        //create User
+        createUser(email, password)
+          .then(result => {
+             //get token
+               setAuthToken(result.user)
+            updateUserProfile(name,imageData.data.display_url)
+            .then(
+            verifyEmail().then(()=>{
+              toast.success('Plaese check your email form verification link')
+              navigate(from, { replace: true})
+            }
+            
+            )
+            
+            )
+            .catch(err => console.log(err))
+          })
+          .catch(err =>{
+            setLoading(false)
+          })
+      })
+      .catch(err => console.log(err))
+  }
+
+  const handleGoogleSignin = () =>{
+    signInWithGoogle()
+    .then(result => {
+      toast.success('SignUp Successful........!')
+       //get token
+       setAuthToken(result.user)
+      navigate(from, { replace: true})
+    })
+  }
+
   return (
     <div className='flex justify-center items-center pt-8'>
       <div className='flex flex-col max-w-md p-6 rounded-md sm:p-10 bg-gray-100 text-gray-900'>
@@ -12,6 +73,7 @@ const Signup = () => {
           <p className='text-sm text-gray-400'>Create a new account</p>
         </div>
         <form
+          onSubmit={handleSubmit}
           noValidate=''
           action=''
           className='space-y-12 ng-untouched ng-pristine ng-valid'
@@ -79,7 +141,7 @@ const Signup = () => {
                 type='submit'
                 classes='w-full px-8 py-3 font-semibold rounded-md bg-gray-900 hover:bg-gray-700 hover:text-white text-gray-100'
               >
-                Sign up
+               { loading ? <SmallSpinner/> : 'Sign Up'}
               </PrimaryButton>
             </div>
           </div>
@@ -92,7 +154,9 @@ const Signup = () => {
           <div className='flex-1 h-px sm:w-16 dark:bg-gray-700'></div>
         </div>
         <div className='flex justify-center space-x-4'>
-          <button aria-label='Log in with Google' className='p-3 rounded-sm'>
+          <button
+          onClick={handleGoogleSignin}
+          aria-label='Log in with Google' className='p-3 rounded-sm'>
             <svg
               xmlns='http://www.w3.org/2000/svg'
               viewBox='0 0 32 32'
