@@ -40,6 +40,7 @@ const Signup = () => {
             .then(
             verifyEmail().then(()=>{
               toast.success('Plaese check your email form verification link')
+              setLoading(false);
               navigate(from, { replace: true})
             }
             

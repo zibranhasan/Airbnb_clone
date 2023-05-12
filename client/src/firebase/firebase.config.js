@@ -7,13 +7,12 @@ import { initializeApp } from "firebase/app";
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyDhkAKVAvPyHZA79Xjz36pB7GyX6PNRFrQ",
-  authDomain: "airbnb-524ef.firebaseapp.com",
-  projectId: "airbnb-524ef",
-  storageBucket: "airbnb-524ef.appspot.com",
-  messagingSenderId: "1042853919351",
-  appId: "1:1042853919351:web:140118c5f1971ee69a6472",
-  measurementId: "G-YVM7QP39N1"
+  apiKey: process.env.REACT_APP_apiKey,
+  authDomain: process.env.REACT_APP_authDomain,
+  projectId: process.env.REACT_APP_projectId,
+  storageBucket: process.env.REACT_APP_storageBucket,
+  messagingSenderId: process.env.REACT_APP_messagingSenderId,
+  appId: process.env.REACT_APP_appId,
 };
 
 // Initialize Firebase
